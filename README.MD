@@ -106,6 +106,7 @@ Below is an example ``manifest.yaml`` file::
     
     bwa: bwa
     samtools: samtools
+    threads: 4
     
     read_threshold: 4
     window_size: 3
@@ -155,6 +156,7 @@ When running the end-to-end analysis functionality of the CHANGEseq package a nu
 - `analysis_folder`: The absolute path to the folder in which all pipeline outputs will be saved.
 - `bwa`: The absolute path to the `bwa` executable
 - `samtools`: The absolute path to the `samtools` executable
+- `threads`: Optional thread count passed to BWA alignment (`-t`) and both SAMtools sorting steps (`-@`). Defaults to 1.
 - `read_threshold`: The minimum number of reads at a location for that location to be called as a site. We recommend leaving it to the default value of 4.
 - `window_size`: Size of the sliding window, we recommend leaving it to the default value of 3.
 - `mapq_threshold`: Minimum read mapping quality score. We recommend leaving it to the default value of 50.
@@ -186,7 +188,7 @@ When running the end-to-end analysis functionality of the CHANGEseq package a nu
 When running the full pipeline, the results of each step are outputted to the `analysis_folder` in a separate folder for each step. The output folders and their respective contents are as follows:
 
 - `analysis_folder/aligned`: Contains an alignment `.sam`, alignment `.bam`, sorted `bam`, and `.bai` index file for each sample.
-- `analysis_folder/fastq`: Merged `.fastq.gz` files for each sample.
+- `analysis_folder/fastq`: Merged uncompressed `.fastq` files for each sample.
 - `analysis_folder/identified`: Contains tab-delimited `.txt` files for each sample containing the identified DSBs, control DSBs, filtered DSBs, and read quantification.
 - `analysis_folder/visualization`: Contains a `.svg` vector image representing an alignment of all detected off-targets to the targetsite for each sample.
 

@@ -50,6 +50,7 @@ class CircleSeq:
             validation.validateManifest(manifest_data)
 
             self.BWA_path  = manifest_data['bwa']
+            self.threads = manifest_data.get('threads', 1)
             self.reference_genome = manifest_data['reference_genome']
             self.analysis_folder = manifest_data['analysis_folder']
 
@@ -120,8 +121,8 @@ class CircleSeq:
             try:
                 self.merged = {}
                 for sample in self.samples:
-                    sample_merge_path = os.path.join(self.analysis_folder, 'fastq', sample + '_merged.fastq.gz')
-                    control_sample_merge_path = os.path.join(self.analysis_folder, 'fastq', 'control_' + sample + '_merged.fastq.gz')
+                    sample_merge_path = os.path.join(self.analysis_folder, 'fastq', sample + '_merged.fastq')
+                    control_sample_merge_path = os.path.join(self.analysis_folder, 'fastq', 'control_' + sample + '_merged.fastq')
                     mergeReads(self.samples[sample]['read1'],
                                self.samples[sample]['read2'],
                                sample_merge_path)
@@ -136,13 +137,15 @@ class CircleSeq:
                                self.reference_genome,
                                sample_merge_path,
                                '',
-                               sample_alignment_path)
+                               sample_alignment_path,
+                               threads=self.threads)
 
                     alignReads(self.BWA_path,
                                self.reference_genome,
                                control_sample_merge_path,
                                '',
-                               control_sample_alignment_path)
+                               control_sample_alignment_path,
+                               threads=self.threads)
 
                     self.merged[sample] = sample_alignment_path
                     logger.info('Finished merging and aligning reads.')
@@ -163,12 +166,14 @@ class CircleSeq:
                                self.reference_genome,
                                self.samples[sample]['read1'],
                                self.samples[sample]['read2'],
-                               sample_alignment_path)
+                               sample_alignment_path,
+                               threads=self.threads)
                     alignReads(self.BWA_path,
                                self.reference_genome,
                                self.samples[sample]['controlread1'],
                                self.samples[sample]['controlread2'],
-                               control_sample_alignment_path)
+                               control_sample_alignment_path,
+                               threads=self.threads)
                     self.aligned[sample] = sample_alignment_path
                     self.aligned_sorted[sample] = os.path.join(self.analysis_folder, 'aligned', sample + '_sorted.bam')
                     logger.info('Finished aligning reads to genome.')
